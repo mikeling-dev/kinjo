@@ -4,6 +4,10 @@ import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
+import { useAuth } from "@/lib/AuthContext";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import Link from "next/link";
+import { Avatar } from "./ui/avatar";
 
 export default function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -11,20 +15,33 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [name, setname] = useState("");
   const [message, setMessage] = useState("");
+  const { user, login, logout } = useAuth();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const endpoint = isSignUp ? "/api/auth/signup" : "/api/auth/login";
     const body = isSignUp ? { email, password, name } : { email, password };
 
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    const data = await res.json();
-    setMessage(data.message || data.error);
+      const data = await res.json();
+      if (res.ok) {
+        login(data.user);
+        setMessage(data.message);
+        setEmail("");
+        setPassword("");
+        setname("");
+      } else {
+        setMessage(data.error);
+      }
+    } catch (error) {
+      setMessage("An error occured");
+    }
   };
 
   return (
