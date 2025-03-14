@@ -36,7 +36,7 @@ export default function Navbar() {
       {user ? (
         <Popover>
           <PopoverTrigger>
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-10 w-10 border p-1">
               <svg
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -47,8 +47,11 @@ export default function Navbar() {
               </svg>
             </Avatar>
           </PopoverTrigger>
-          <PopoverContent className="flex flex-col gap-4">
-            <Link href="/" className="w-full disabled">
+          <PopoverContent className="flex flex-col gap-4 mr-4 mt-4">
+            <Link
+              href="/"
+              className="flex w-full disabled border-b p-3 hover:bg-muted hover:text-muted-foreground rounded-md justify-center"
+            >
               Profile
             </Link>
             <Button onClick={logout}>Logout</Button>
