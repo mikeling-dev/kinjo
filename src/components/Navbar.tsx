@@ -1,9 +1,14 @@
+import Link from "next/link";
 import { Button } from "./ui/button";
+import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
+import AuthForm from "./AuthForm";
 
 export default function Navbar() {
   return (
     <div className="flex flex-row w-full h-fit p-4 py-6 justify-between items-center border-b">
-      <h1 className="font-bold text-xl">Kinjo</h1>
+      <Link href={"/"}>
+        <h1 className="font-bold text-xl">Kinjo</h1>
+      </Link>
       <Button
         variant={"outline"}
         className="rounded-3xl w-1/2 py-6 text-muted-foreground shadow-lg"
@@ -22,9 +27,14 @@ export default function Navbar() {
         </svg>
         Start searching
       </Button>
-      <div>
-        <Button>Login</Button>
-      </div>
+      <Drawer>
+        <DrawerTrigger asChild>
+          <Button>Login</Button>
+        </DrawerTrigger>
+        <DrawerContent className="pb-20">
+          <AuthForm />
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }
