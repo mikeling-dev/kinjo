@@ -6,6 +6,7 @@ export default function Home() {
     <div className=" font-[family-name:var(--font-geist-sans)]">
       <Navbar />
       <h1>listing content</h1>
+      {/* <AuthForm /> */}
     </div>
   );
 }

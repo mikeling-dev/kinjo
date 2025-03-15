@@ -5,9 +5,11 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { useAuth } from "@/lib/AuthContext";
+import google from "../public/google.svg";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import Link from "next/link";
 import { Avatar } from "./ui/avatar";
+import Image from "next/image";
 
 export default function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -98,6 +100,14 @@ export default function AuthForm() {
 
             <Button type="submit" className="my-2">
               {isSignUp ? "Sign up" : "Login"}
+            </Button>
+            <div className="border mb-2"></div>
+            <Button
+              variant={"outline"}
+              onClick={() => (window.location.href = "/api/auth/google")}
+            >
+              <Image src={google} alt="google" height={16} /> Continue with
+              Google
             </Button>
             <p className="text-muted-foreground italic text-xs">{message}</p>
           </form>

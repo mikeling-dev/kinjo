@@ -2,22 +2,26 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  "b5609d25f062fdcc30dd7ed4ed46eda8fcd8ecf37c0ebff0ae48f1e2f7ee5636";
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-export async function POST(req: any) {
+export async function POST(req: NextRequest) {
   try {
     const { email, password, name } = await req.json();
 
     // Check if email already exists
     const exisitingUser = await prisma.user.findUnique({ where: { email } });
     if (exisitingUser) {
-      return new Response(JSON.stringify({ error: "Email already in use" }), {
-        status: 400,
-      });
+      return (
+        NextResponse.json({
+          error: "Email already in use, please log in instead.",
+        }),
+        {
+          status: 400,
+        }
+      );
     }
 
     // Hash the password
@@ -43,8 +47,8 @@ export async function POST(req: any) {
       path: "/",
     });
 
-    return new Response(
-      JSON.stringify({
+    return (
+      NextResponse.json({
         message: "User created and logged in",
         user: { id: user.id, email, name },
       }),
@@ -52,6 +56,6 @@ export async function POST(req: any) {
     );
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: "Signup failed" }));
+    return NextResponse.json({ error: "Signup failed" }, { status: 500 });
   }
 }
