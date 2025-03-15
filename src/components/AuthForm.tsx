@@ -6,9 +6,6 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { useAuth } from "@/lib/AuthContext";
 import google from "../public/google.svg";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import Link from "next/link";
-import { Avatar } from "./ui/avatar";
 import Image from "next/image";
 
 export default function AuthForm() {
@@ -17,7 +14,7 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [name, setname] = useState("");
   const [message, setMessage] = useState("");
-  const { user, login, logout } = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

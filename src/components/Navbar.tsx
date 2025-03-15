@@ -3,13 +3,14 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import AuthForm from "./AuthForm";
-
+import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const [open, setOpen] = useState(false);
   return (
     <div className="flex flex-row w-full h-fit p-4 py-6 justify-between items-center border-b">
       <Link href={"/"}>
@@ -34,7 +35,7 @@ export default function Navbar() {
         Start searching
       </Button>
       {user ? (
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger>
             <Avatar className="h-10 w-10 border p-1">
               <svg
@@ -47,12 +48,20 @@ export default function Navbar() {
               </svg>
             </Avatar>
           </PopoverTrigger>
-          <PopoverContent className="flex flex-col gap-4 mr-4 mt-4">
+          <PopoverContent className="flex flex-col mr-4 mt-4">
             <Link
-              href="/"
-              className="flex w-full disabled border-b p-3 hover:bg-muted hover:text-muted-foreground rounded-md justify-center"
+              href="/profile"
+              onClick={() => setOpen(false)}
+              className="flex w-full border-b p-3 hover:bg-muted hover:text-muted-foreground rounded-md justify-center"
             >
               Profile
+            </Link>
+            <Link
+              href="/host"
+              onClick={() => setOpen(false)}
+              className="flex w-full border-b p-3 mb-4 hover:bg-muted hover:text-muted-foreground rounded-md justify-center"
+            >
+              Host now
             </Link>
             <Button onClick={logout}>Logout</Button>
           </PopoverContent>

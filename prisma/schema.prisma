@@ -11,7 +11,7 @@ model User {
   id             Int              @id @default(autoincrement())
   email          String           @unique
   password       String?
-  googleId       String?
+  googleId       String?          @unique
   name           String?
   phoneNumber    String?          @map("phone_number")
   isHost         Boolean          @default(false) @map("is_host")
@@ -23,7 +23,7 @@ model User {
   wishlists      Wishlist[]
   sentMessages   Message[]        @relation("SentMessages")
   receivedMessages Message[]      @relation("ReceivedMessages")
-  hostApplications HostApplication[]
+  hostApplications HostApplication?
   paymentMethods PaymentMethod[]
 
   @@map("users")
@@ -136,7 +136,8 @@ model Message {
 
 model HostApplication {
   id             Int              @id @default(autoincrement())
-  userId         Int              @map("user_id")
+  userId         Int              @unique @map("user_id")
+  fullName       String?          @map("full_name")
   contactInfo    String?          @map("contact_info")
   bankAccount    String?          @map("bank_account")
   bankName       String?          @map("bank_name")
