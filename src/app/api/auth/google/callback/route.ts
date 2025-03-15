@@ -4,9 +4,7 @@ import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
 
 const prisma = new PrismaClient();
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  "b5609d25f062fdcc30dd7ed4ed46eda8fcd8ecf37c0ebff0ae48f1e2f7ee5636";
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
