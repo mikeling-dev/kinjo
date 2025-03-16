@@ -50,13 +50,17 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // const hostStatus = await prisma.user.update({
-    //   data: {
-    //     isHost: true
-    //   }
-    // })
+    await prisma.user.update({
+      where: { id: userData.userId },
+      data: { isHost: true },
+    });
+
     return NextResponse.json(
-      { message: "Application submitted", application },
+      {
+        message: "Application submitted",
+        application,
+        isHost: user?.isHost || false,
+      },
       { status: 201 }
     );
   } catch (error) {

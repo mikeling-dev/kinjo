@@ -61,7 +61,7 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className="flex w-full border-b p-3 mb-4 hover:bg-muted hover:text-muted-foreground rounded-md justify-center"
             >
-              Host now
+              {user.isHost ? "Host Dashboard" : "Host now"}
             </Link>
             <Button onClick={logout}>Logout</Button>
           </PopoverContent>

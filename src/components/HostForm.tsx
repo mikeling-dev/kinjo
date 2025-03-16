@@ -6,6 +6,7 @@ import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { CountryCodeSelector } from "./CountryCodeSelector";
 import { useAuth } from "@/lib/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function HostForm() {
   const [fullName, setFullName] = useState("");
@@ -15,7 +16,8 @@ export default function HostForm() {
   const [countryCode, setCountryCode] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, refreshUser } = useAuth();
 
   const handleContactChange = (newCode: string, newNumber: string) => {
     setCountryCode(newCode);
@@ -35,6 +37,7 @@ export default function HostForm() {
       });
       const data = await res.json();
       if (res.ok) {
+        await refreshUser();
         setMessage("Application submitted!");
         setFullName("");
         setContactInfo("");
@@ -42,6 +45,12 @@ export default function HostForm() {
         setBankAccount("");
         setPhoneNumber("");
         setCountryCode("");
+
+        {
+          user?.isHost
+            ? router.push("/host")
+            : setMessage("Check your application status again in a few moment");
+        }
       } else {
         setMessage(data.error || "Something went wrong...");
       }
