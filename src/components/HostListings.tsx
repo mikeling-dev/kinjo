@@ -5,6 +5,7 @@ import { Skeleton } from "./ui/skeleton";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import SkeletonListingCard from "./SkeletonListingCard";
+import Link from "next/link";
 
 interface Listing {
   id: number;
@@ -77,7 +78,11 @@ export default function HostListings() {
         <p className="font-semibold mb-3">
           Current Listings {listings.length}:
         </p>
-        <Button className="rounded-full h-7 px-3 text-xs">+ Add listing</Button>
+        <Link href="/host/listing_form">
+          <Button className="rounded-full h-7 px-3 text-xs">
+            + Add listing
+          </Button>
+        </Link>
       </div>
       <div className="flex flex-row gap-5 overflow-x-scroll pb-10 px-4">
         {listings.length === 0 ? (
