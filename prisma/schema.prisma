@@ -33,6 +33,10 @@ model Listing {
   id             Int              @id @default(autoincrement())
   hostId         Int              @map("host_id")
   title          String
+  entireUnit     Boolean          @default(true)
+  room           Int              @map("room_count")
+  washroom       Int              @map("washroom_count")
+  capacity       Int              @map("guest_capacity")
   description    String?
   locationState  String?          @map("location_state")
   locationCountry String?         @map("location_country")
