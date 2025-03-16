@@ -2,7 +2,6 @@
 
 import { countries } from "countries-list";
 import { useState } from "react";
-import { Input } from "./ui/input";
 import {
   Command,
   CommandEmpty,
@@ -27,10 +26,7 @@ interface CountryCodeProps {
   onChange?: (value: string) => void;
 }
 
-export function CountryCodeSelector({
-  value = "",
-  onChange,
-}: CountryCodeProps) {
+export function CountryCodeSelector({ value, onChange }: CountryCodeProps) {
   const [open, setOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState(value);
 
@@ -57,9 +53,9 @@ export function CountryCodeSelector({
                 <CommandItem
                   key={country.code}
                   value={country.searchValue}
-                  onSelect={(currentValue) => {
-                    setSelectedCode(currentValue);
-                    onChange?.(currentValue);
+                  onSelect={() => {
+                    setSelectedCode(country.code.toString());
+                    onChange?.(country.code.toString());
                     setOpen(false);
                   }}
                 >

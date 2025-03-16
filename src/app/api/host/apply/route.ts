@@ -10,15 +10,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const hostData = await req.json();
-  if (!hostData) {
-    return NextResponse.json(
-      { error: "Application information required" },
-      { status: 400 }
-    );
-  }
-
   try {
+    const { fullName, contactInfo, bankAccount, bankName } = await req.json();
+    if (!fullName || !contactInfo || !bankAccount || !bankName) {
+      return NextResponse.json(
+        { error: "Application information required" },
+        { status: 400 }
+      );
+    }
+
     const existingApplication = await prisma.hostApplication.findUnique({
       where: { userId: userData.userId },
     });
@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { fullName, contactInfo, bankAccount, bankName } = hostData;
     const application = await prisma.hostApplication.create({
       data: {
         userId: userData.userId,
@@ -47,9 +46,19 @@ export async function POST(req: NextRequest) {
         contactInfo,
         bankAccount,
         bankName,
+        status: "approved", // Approve by submission for now, can change to manual review or setup review api in future
       },
     });
-    return NextResponse.json({ message: "Application submitted", application });
+
+    // const hostStatus = await prisma.user.update({
+    //   data: {
+    //     isHost: true
+    //   }
+    // })
+    return NextResponse.json(
+      { message: "Application submitted", application },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error submitting application: ", error);
     return NextResponse.json(
