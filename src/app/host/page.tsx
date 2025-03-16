@@ -13,7 +13,9 @@ export default function Host() {
 
   return (
     <div className="flex flex-col justify-center w-full p-4 py-6">
-      <h1>Host Dashboard</h1>
+      <div>
+        <h1 className="text-xl font-extrabold">Welcome back {user.name}!</h1>
+      </div>
     </div>
   );
 }

@@ -20,8 +20,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   // Check for existing session on mount
   useEffect(() => {
     fetch("/api/auth/user")
@@ -29,7 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (res.ok) return res.json();
         throw new Error("Not authenticated");
       })
-      .then((data: User) => setUser(data))
+      .then((data: User) => {
+        setUser(data);
+        localStorage.setItem("user", JSON.stringify(data));
+      })
       .catch(() => setUser(null));
   }, []);
 
