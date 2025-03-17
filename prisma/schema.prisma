@@ -91,6 +91,7 @@ model Booking {
   totalPrice     Decimal          @map("total_price") @db.Decimal(10, 2)
   paymentStatus  String           @default("pending") @map("payment_status")
   createdAt      DateTime         @default(now()) @map("created_at")
+  guests         Int              @map("guests")
   
   // Relations
   user           User             @relation(fields: [userId], references: [id])

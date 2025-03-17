@@ -7,33 +7,43 @@ import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { useAuth } from "@/lib/AuthContext";
+import SearchForm from "./SearchForm";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   return (
     <div className="flex flex-row w-full h-fit p-4 py-6 justify-between items-center border-b">
       <Link href={"/"}>
         <h1 className="font-bold text-xl">Kinjo</h1>
       </Link>
-      <Button
-        variant={"outline"}
-        className="rounded-3xl w-1/2 py-6 text-muted-foreground shadow-lg"
-      >
-        <svg
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            clipRule="evenodd"
-            fillRule="evenodd"
-            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-          />
-        </svg>
-        Start searching
-      </Button>
+      <Drawer open={searchOpen} onOpenChange={setSearchOpen}>
+        <DrawerTrigger asChild>
+          <Button
+            variant="outline"
+            className="rounded-3xl w-1/2 py-6 text-muted-foreground shadow-lg flex items-center justify-center gap-2"
+          >
+            <svg
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              className="w-5 h-5"
+            >
+              <path
+                clipRule="evenodd"
+                fillRule="evenodd"
+                d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+              />
+            </svg>
+            Start searching
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="p-6">
+          <SearchForm onSearch={() => setSearchOpen(false)} />
+        </DrawerContent>
+      </Drawer>
       {user ? (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger>
