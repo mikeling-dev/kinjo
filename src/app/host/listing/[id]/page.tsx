@@ -7,11 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "react-beautiful-dnd";
+  DndContext,
+  closestCenter,
+  useSensor,
+  useSensors,
+  PointerSensor,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -19,6 +27,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
 
 interface Listing {
   id: number;
@@ -38,6 +48,37 @@ interface Listing {
   availabilities: { id: number; startDate: string; endDate: string }[];
 }
 
+const SortablePhoto = ({
+  photo,
+}: {
+  photo: { id: number; photoUrl: string };
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: photo.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <Card
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="flex items-center p-2 w-fit mb-2"
+    >
+      <Image
+        src={photo.photoUrl}
+        height={200}
+        width={200}
+        alt="Listing photo"
+        className="w-24 h-24 object-cover rounded-lg"
+      />
+    </Card>
+  );
+};
+
 export default function ListingDetailsPage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -47,6 +88,15 @@ export default function ListingDetailsPage() {
   const [photos, setPhotos] = useState<{ id: number; photoUrl: string }[]>([]);
   const [excludedDates, setExcludedDates] = useState<Date[]>([]);
 
+  // Define sensors outside render
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require a small movement to start dragging
+      },
+    })
+  );
+
   useEffect(() => {
     if (!user) return;
     fetch(`/api/host/listing?id=${id}`)
@@ -55,6 +105,7 @@ export default function ListingDetailsPage() {
         return res.json();
       })
       .then((data: Listing) => {
+        console.log("Fetched photos:", data.photos);
         setListing(data);
         setPhotos(data.photos);
         setExcludedDates(data.availabilities.map((a) => new Date(a.startDate)));
@@ -71,7 +122,7 @@ export default function ListingDetailsPage() {
     if (!listing) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
-    formData.append("photos", JSON.stringify(photos)); // Updated photo order
+    formData.append("photos", JSON.stringify(photos));
     formData.append(
       "excludedDates",
       JSON.stringify(excludedDates.map((d) => d.toISOString()))
@@ -113,12 +164,14 @@ export default function ListingDetailsPage() {
     }
   };
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-    const newPhotos = Array.from(photos);
-    const [reorderedItem] = newPhotos.splice(result.source.index, 1);
-    newPhotos.splice(result.destination.index, 0, reorderedItem);
-    setPhotos(newPhotos);
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      const oldIndex = photos.findIndex((p) => p.id === active.id);
+      const newIndex = photos.findIndex((p) => p.id === over.id);
+      const newPhotos = arrayMove(photos, oldIndex, newIndex);
+      setPhotos(newPhotos);
+    }
   };
 
   const handleAddExcludedDate = (date: Date | undefined) => {
@@ -228,42 +281,22 @@ export default function ListingDetailsPage() {
           <label className="block font-semibold">
             Photos (Drag to reorder)
           </label>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="photos">
-              {(provided) => (
-                <ul
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className="space-y-2"
-                >
-                  {photos.map((photo, index) => (
-                    <Draggable
-                      key={photo.id}
-                      draggableId={String(photo.id)}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <li
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="flex items-center"
-                        >
-                          <img
-                            src={photo.photoUrl}
-                            alt="Listing photo"
-                            className="w-24 h-24 object-cover mr-2"
-                          />
-                          <span>{photo.photoUrl.split("id=")[1]}</span>
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={photos.map((p) => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <Card className="flex flex-col p-2 justify-center items-center">
+                {photos.map((photo) => (
+                  <SortablePhoto key={photo.id} photo={photo} />
+                ))}
+              </Card>
+            </SortableContext>
+          </DndContext>
         </div>
         <div>
           <label className="block font-semibold">Exclude Dates</label>

@@ -4,6 +4,7 @@ const nextConfig = {
     domains: ["drive.google.com"],
   },
   async headers() {
+    reactStrictMode: false;
     return [
       {
         source: "/:path*",
