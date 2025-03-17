@@ -19,7 +19,7 @@ export default function ListingFormPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [pricePerNight, setPricePerNight] = useState("");
-  //   const [entireUnit, setEntireUnit] = useState(true);
+  const [entireUnit, setEntireUnit] = useState(true);
   const [room, setRoom] = useState("");
   const [washroom, setWashroom] = useState("");
   const [capacity, setCapacity] = useState("");
@@ -49,7 +49,7 @@ export default function ListingFormPage() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("title", title);
-    // formData.append("entireUnit", String(entireUnit));
+    formData.append("entireUnit", String(entireUnit));
     formData.append("room", room);
     formData.append("washroom", washroom);
     formData.append("capacity", capacity);
@@ -95,7 +95,7 @@ export default function ListingFormPage() {
             required
           />
         </div>
-        {/* <div>
+        <div>
           <label className="flex items-center font-semibold">
             <Checkbox
               checked={entireUnit}
@@ -103,7 +103,7 @@ export default function ListingFormPage() {
             />
             <span className="ml-2">Entire Unit</span>
           </label>
-        </div> */}
+        </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="grid">
             <label className="block font-semibold">Rooms</label>

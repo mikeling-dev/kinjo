@@ -6,6 +6,7 @@ import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import SkeletonListingCard from "./SkeletonListingCard";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Listing {
   id: number;
@@ -18,7 +19,7 @@ interface Listing {
   washroom: number;
   capacity: number;
   createdAt: string;
-  photo: { id: number; photoUrl: string } | null;
+  photos: { id: number; photoUrl: string }[];
 }
 
 export default function HostListings() {
@@ -35,7 +36,7 @@ export default function HostListings() {
         })
         .then((data: Listing[]) => {
           setListings(data);
-          setLoading(false);
+          setTimeout(() => setLoading(false), 300);
         })
         .catch((error) => {
           console.error(error);
@@ -74,33 +75,46 @@ export default function HostListings() {
 
   return (
     <div>
-      <div className="flex flex-row justify-between w-full px-4">
-        <p className="font-semibold mb-3">
-          Current Listings {listings.length}:
-        </p>
+      <div className="flex flex-row justify-between w-full px-4 mb-3">
+        <p className="font-semibold">Current Listings {listings.length}:</p>
         <Link href="/host/listing_form">
           <Button className="rounded-full h-7 px-3 text-xs">
             + Add listing
           </Button>
         </Link>
       </div>
-      <div className="flex flex-row gap-5 overflow-x-scroll pb-10 px-4">
+      <div className="flex flex-row gap-5 overflow-x-scroll pb-10 px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {listings.length === 0 ? (
           <p>No listings yet. Add one!</p>
         ) : (
-          <Card className="space-y-4">
-            {listings.map((listing) => (
-              <li key={listing.id} className="p-4 border rounded">
-                <h2 className="text-xl">{listing.title}</h2>
+          listings.map((listing) => (
+            <Card
+              key={listing.id}
+              className="w-60 min-w-60 rounded-xl shadow-lg"
+            >
+              <Image
+                src={listing.photos[0]?.photoUrl || "/placeholder-image.jpg"}
+                alt={listing.title}
+                width={400}
+                height={300}
+                className="w-full h-36 rounded-t-md object-cover"
+              />
+              <div className="p-3 text-xs">
+                <h2 className="text-base font-semibold">
+                  {listing.title} in {listing.locationState}
+                </h2>
                 <p>${listing.pricePerNight} / night</p>
-                <p>Type: {listing.entireUnit ? "Entire Unit" : "Shared"}</p>
                 <p>
-                  Rooms: {listing.room}, Washrooms: {listing.washroom}
+                  {listing.entireUnit ? "Entire Unit" : "Shared Unit"} in{" "}
+                  {listing.locationCountry}
                 </p>
-                <p>Capacity: {listing.capacity} guests</p>
-              </li>
-            ))}
-          </Card>
+                <p>
+                  {listing.capacity} Guests, {listing.room} Rooms,{" "}
+                  {listing.washroom} Baths
+                </p>
+              </div>
+            </Card>
+          ))
         )}
       </div>
     </div>
