@@ -1,7 +1,6 @@
 "use client";
 import { useAuth } from "@/lib/AuthContext";
 import { useEffect, useState } from "react";
-import { Skeleton } from "./ui/skeleton";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import SkeletonListingCard from "./SkeletonListingCard";
@@ -88,32 +87,34 @@ export default function HostListings() {
           <p>No listings yet. Add one!</p>
         ) : (
           listings.map((listing) => (
-            <Card
-              key={listing.id}
-              className="w-60 min-w-60 rounded-xl shadow-lg"
-            >
-              <Image
-                src={listing.photos[0]?.photoUrl || "/placeholder-image.jpg"}
-                alt={listing.title}
-                width={400}
-                height={300}
-                className="w-full h-36 rounded-t-md object-cover"
-              />
-              <div className="p-3 text-xs">
-                <h2 className="text-base font-semibold">
-                  {listing.title} in {listing.locationState}
-                </h2>
-                <p>${listing.pricePerNight} / night</p>
-                <p>
-                  {listing.entireUnit ? "Entire Unit" : "Shared Unit"} in{" "}
-                  {listing.locationCountry}
-                </p>
-                <p>
-                  {listing.capacity} Guests, {listing.room} Rooms,{" "}
-                  {listing.washroom} Baths
-                </p>
-              </div>
-            </Card>
+            <Link href={`/host/listing/${listing.id}`}>
+              <Card
+                key={listing.id}
+                className="w-60 min-w-60 rounded-xl shadow-lg"
+              >
+                <Image
+                  src={listing.photos[0]?.photoUrl || "/placeholder-image.jpg"}
+                  alt={listing.title}
+                  width={400}
+                  height={300}
+                  className="w-full h-36 rounded-t-md object-cover"
+                />
+                <div className="p-3 text-xs">
+                  <h2 className="text-base font-semibold">
+                    {listing.title} in {listing.locationState}
+                  </h2>
+                  <p>${listing.pricePerNight} / night</p>
+                  <p>
+                    {listing.entireUnit ? "Entire Unit" : "Shared Unit"} in{" "}
+                    {listing.locationCountry}
+                  </p>
+                  <p>
+                    {listing.capacity} Guests, {listing.room} Rooms,{" "}
+                    {listing.washroom} Baths
+                  </p>
+                </div>
+              </Card>
+            </Link>
           ))
         )}
       </div>
