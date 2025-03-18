@@ -12,10 +12,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils"; // Shadcn utility
 import { format } from "date-fns";
+import { useAuth } from "@/lib/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export default function ListingFormPage() {
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [pricePerNight, setPricePerNight] = useState("");
@@ -47,7 +49,9 @@ export default function ListingFormPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
+    if (!user) return;
+
+    const formData = new FormData(e.target as HTMLFormElement);
     formData.append("title", title);
     formData.append("entireUnit", String(entireUnit));
     formData.append("room", room);
@@ -59,7 +63,9 @@ export default function ListingFormPage() {
     if (latitude) formData.append("latitude", latitude);
     if (longitude) formData.append("longitude", longitude);
     formData.append("pricePerNight", pricePerNight);
-    photoFiles.forEach((file) => formData.append("photos", file));
+    for (const file of photoFiles) {
+      formData.append("photos", file);
+    }
     formData.append(
       "excludedDates",
       JSON.stringify(excludedDates.map((d) => d.toISOString()))

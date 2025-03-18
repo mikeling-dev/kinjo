@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import SkeletonListingCard from "@/components/SkeletonListingCard";
 
 interface Listing {
   id: number;
@@ -62,7 +63,17 @@ export default function HomePage() {
     });
   }, [searchParams]);
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading)
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <SkeletonListingCard />
+        <SkeletonListingCard />
+        <SkeletonListingCard />
+        <SkeletonListingCard />
+        <SkeletonListingCard />
+        <SkeletonListingCard />
+      </div>
+    );
 
   return (
     <div className="p-4">

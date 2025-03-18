@@ -1,37 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kinjo - Airbnb-Inspired Accommodation Platform
 
-## Getting Started
+![Kinjo Demo](link-to-screenshot-or-gif)
 
-First, run the development server:
+Kinjo is a demo web application inspired by Airbnb, built to showcase full-stack development skills. It allows users to browse listings, search with filters (location, price, rooms, guests, dates), book accommodations, and manage bookings as guests, while hosts can create and edit listings. The app features a modern UI with drag-and-drop photo reordering, Google Drive photo uploads, and a responsive design.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **User Authentication**: Login/logout with JWT-based auth.
+- **Search Listings**: Filter by place, price range, room count, guest capacity, and dates.
+- **Host Dashboard**: Create, update, and delete listings with photo uploads to Google Drive.
+- **Booking System**: Guests can book listings with date selection and availability checks.
+- **Profile Page**: View booking history with listing details.
+- **Responsive UI**: Built with Next.js and Shadcn/UI components for a polished, mobile-friendly experience.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS, Shadcn/UI
+- **Backend**: Next.js API Routes, Prisma ORM, PostgreSQL
+- **Auth**: JWT (JSON Web Tokens)
+- **Storage**: Google Drive API for photo uploads
+- **Deployment**: Vercel
 
-## Learn More
+## Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js (v18+)
+- PostgreSQL database
+- Google Cloud Console account (for Drive API credentials)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Setup Instructions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the Repository**
 
-## Deploy on Vercel
+   ```bash
+   git clone https://github.com/your-username/kinjo.git
+   cd kinjo
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Install Dependencies**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# kinjo
+   ```bash
+   npm install
+   ```
+
+3. **Set Up Environment Variables Create a .env file in the root directory and add:**
+
+   ```bash
+   DATABASE_URL="postgresql://user:password@localhost:5432/kinjo_db"
+   JWT_SECRET="your-secret-key"
+   GOOGLE_DRIVE_CLIENT_ID="your-google-client-id"
+   GOOGLE_DRIVE_CLIENT_SECRET="your-google-client-secret"
+   GOOGLE_DRIVE_REDIRECT_URI="http://localhost:3000/api/auth/google-drive-callback"
+   GOOGLE_DRIVE_TOKEN='{"access_token":"...","refresh_token":"..."}'
+   ```
+
+4. **Initialize Database**
+
+   ```base
+   npx prisma db push
+   ```
+
+5. **Run the Development Server**
+   ```bash
+   npm run dev
+   ```
+
+## Deployment
+
+> Deployed on Vercel
+
+### Steps to Deploy on Vercel
+
+1. **Install the Vercel CLI:**
+
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Deploy:**
+
+   ```bash
+   vercel
+   ```
+
+3. **Set environment variables in Vercel dashboard (same as .env).**
+
+## Portfolio Notes
+
+**This prject demonstrates:**
+
+- Full-stack development with Next.js and Prisma
+- Integration with third-party APIs (Google Drive, OAuth2.0)
+- Modern UI/UX with drag-and-drop functionality (@dnd-kit)
+- Relational database design and querying
+
+## License
+
+MIT License - feel free to use this code for your own projects!

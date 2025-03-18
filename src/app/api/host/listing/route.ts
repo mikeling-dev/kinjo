@@ -3,13 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserFromToken } from "@/lib/auth";
 import { google } from "googleapis";
 import { Readable } from "stream";
+import { createClient } from "@supabase/supabase-js";
 
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_DRIVE_CLIENT_ID,
-  process.env.GOOGLE_DRIVE_CLIENT_SECRET,
-  process.env.GOOGLE_DRIVE_REDIRECT_URI
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role key for server-side
 );
-const drive = google.drive({ version: "v3", auth: oauth2Client });
 
 export async function GET(req: NextRequest) {
   const userData = getUserFromToken(req);
@@ -62,7 +61,7 @@ export async function POST(req: NextRequest) {
   if (!user?.isHost)
     return NextResponse.json({ error: "Not a host" }, { status: 403 });
 
-  oauth2Client.setCredentials(JSON.parse(process.env.GOOGLE_DRIVE_TOKEN!));
+  // oauth2Client.setCredentials(JSON.parse(process.env.GOOGLE_DRIVE_TOKEN!));
 
   const formData = await req.formData();
   const title = formData.get("title") as string;
@@ -102,28 +101,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Upload photos to Google Drive and get URLs
-  const photoUrls = await Promise.all(
-    photoFiles.map(async (file) => {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const stream = Readable.from(buffer);
-
-      const { data } = await drive.files.create({
-        requestBody: {
-          name: `${Date.now()}-${file.name}`,
-          mimeType: file.type,
-        },
-        media: { body: stream },
-      });
-
-      await drive.permissions.create({
-        fileId: data.id!,
-        requestBody: { role: "reader", type: "anyone" },
-      });
-
-      return `https://drive.google.com/uc?id=${data.id}`;
-    })
-  );
+  const photoUrls: string[] = [];
+  for (const file of photoFiles) {
+    const fileName = `${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage
+      .from("listings-photos")
+      .upload(fileName, file, { cacheControl: "3600" });
+    if (error) {
+      console.error("Upload error:", error.message);
+      return NextResponse.json(
+        { error: `Upload failed: ${error.message}` },
+        { status: 500 }
+      );
+    }
+    const { data: urlData } = supabase.storage
+      .from("listings-photos")
+      .getPublicUrl(fileName);
+    photoUrls.push(urlData.publicUrl);
+  }
 
   try {
     const listing = await prisma.listing.create({
@@ -142,7 +137,7 @@ export async function POST(req: NextRequest) {
         pricePerNight,
         isAlwaysAvailable: excludedDates.length === 0,
         photos: {
-          create: photoUrls.map((photoUrl) => ({ photoUrl })),
+          create: photoUrls.map((url: string) => ({ photoUrl: url })),
         },
         availabilities: {
           create: excludedDates.map((date) => ({
