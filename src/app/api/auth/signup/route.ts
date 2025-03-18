@@ -6,6 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const { email, password, name } = await req.json();

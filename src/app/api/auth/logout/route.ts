@@ -1,5 +1,7 @@
 import { serialize } from "cookie";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const cookie = serialize("token", "", {
     httpOnly: true,

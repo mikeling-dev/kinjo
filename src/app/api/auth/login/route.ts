@@ -8,6 +8,8 @@ const JWT_SECRET =
   process.env.JWT_SECRET ||
   "b5609d25f062fdcc30dd7ed4ed46eda8fcd8ecf37c0ebff0ae48f1e2f7ee5636";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();

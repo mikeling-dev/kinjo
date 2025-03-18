@@ -6,6 +6,8 @@ import { serialize } from "cookie";
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code"); // Query encoded paramaters from url
