@@ -6,33 +6,44 @@ import { serialize } from "cookie";
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"; // Already correct
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const code = searchParams.get("code"); // Query encoded paramaters from url
+  const code = searchParams.get("code");
 
-  if (!code) NextResponse.json({ error: "No code provided" }, { status: 400 });
-  // Return json object containing access_token, required to fetch user profile from google
+  // Add return to stop execution
+  if (!code) {
+    return NextResponse.json({ error: "No code provided" }, { status: 400 });
+  }
+
+  // Dynamic redirect URI for Vercel
+  const redirectUri = process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/auth/google/callback`
+    : "http://localhost:3000/api/auth/google/callback";
+
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      code: code!,
+      code,
       client_id: process.env.GOOGLE_CLIENT_ID!,
       client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirect_uri: "http://localhost:3000/api/auth/google/callback",
+      redirect_uri: redirectUri,
       grant_type: "authorization_code",
     }),
   });
 
-  // Parse tokenResponse to javascript object
   const tokenData = await tokenResponse.json();
 
-  if (!tokenData.access_token)
-    NextResponse.json({ error: "Failed to get access token" }, { status: 400 });
+  // Add return to stop execution
+  if (!tokenData.access_token) {
+    return NextResponse.json(
+      { error: "Failed to get access token" },
+      { status: 400 }
+    );
+  }
 
-  // fetch user profile from google api using the access_token returned above
   const userResponse = await fetch(
     "https://www.googleapis.com/oauth2/v2/userinfo",
     {
@@ -44,28 +55,22 @@ export async function GET(req: NextRequest) {
   const { id: googleId, email, name } = userData;
 
   let user;
-
-  // check if user has existing account registered with email
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
   if (existingUser) {
-    // Scenario 1: user registered with email before, but never linked google account
     if (!existingUser.googleId) {
       user = await prisma.user.update({
         where: { id: existingUser.id },
         data: { googleId },
       });
     } else {
-      user = existingUser; //Scenario 2: user logged in with google account before
+      user = existingUser;
     }
   } else {
-    // User never registered before
     user = await prisma.user.create({
       data: { googleId, email, name },
     });
   }
-
-  // generate token for login
 
   const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
     expiresIn: "24h",
@@ -77,7 +82,11 @@ export async function GET(req: NextRequest) {
     path: "/",
   });
 
-  return NextResponse.redirect("http://localhost:3000/", {
+  // Dynamic redirect for Vercel
+  const homeUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/`
+    : "http://localhost:3000/";
+  return NextResponse.redirect(homeUrl, {
     headers: { "Set-Cookie": cookie },
   });
 }
