@@ -16,9 +16,9 @@ Kinjo is a demo web application inspired by Airbnb, built to showcase full-stack
 ## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS, Shadcn/UI
-- **Backend**: Next.js API Routes, Prisma ORM, PostgreSQL
+- **Backend**: Next.js API Routes, Prisma ORM, PostgreSQL, Supabase
 - **Auth**: JWT (JSON Web Tokens)
-- **Storage**: Google Drive API for photo uploads
+- **Storage**: supabase
 - **Deployment**: Vercel
 
 ## Prerequisites
