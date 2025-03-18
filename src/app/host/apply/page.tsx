@@ -2,7 +2,6 @@
 import HostForm from "@/components/HostForm";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function HostApplicationPage() {
   const { user } = useAuth();

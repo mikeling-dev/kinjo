@@ -46,10 +46,10 @@ export default function HostForm() {
         setPhoneNumber("");
         setCountryCode("");
 
-        {
-          user?.isHost
-            ? router.push("/host")
-            : setMessage("Check your application status again in a few moment");
+        if (user?.isHost) {
+          router.push("/host");
+        } else {
+          setMessage("Check your application status again in a few moment");
         }
       } else {
         setMessage(data.error || "Something went wrong...");
@@ -63,7 +63,7 @@ export default function HostForm() {
   return (
     <div className="flex flex-col w-full items-center py-10">
       <h1 className="font-semibold mb-5 text-xl">
-        Let's begin your hosting journey
+        Let&apos;s begin your hosting journey
       </h1>
       <Card className="p-10 sm:p-10 w-full sm:max-w-96 shadow-xl">
         <form className="grid grid-col w-full gap-4" onSubmit={handleSubmit}>

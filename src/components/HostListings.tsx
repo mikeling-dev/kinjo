@@ -87,11 +87,8 @@ export default function HostListings() {
           <p>No listings yet. Add one!</p>
         ) : (
           listings.map((listing) => (
-            <Link href={`/host/listing/${listing.id}`}>
-              <Card
-                key={listing.id}
-                className="w-60 min-w-60 rounded-xl shadow-lg"
-              >
+            <Link key={listing.id} href={`/host/listing/${listing.id}`}>
+              <Card className="w-60 min-w-60 rounded-xl shadow-lg">
                 <Image
                   src={listing.photos[0]?.photoUrl || "/placeholder-image.jpg"}
                   alt={listing.title}

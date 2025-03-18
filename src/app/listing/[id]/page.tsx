@@ -86,7 +86,7 @@ export default function ListingDetailsPage() {
         const data = await res.json();
         alert(data.error || "Failed to book");
       }
-    } catch (error) {
+    } catch {
       alert("An error occurred");
     }
   };
@@ -95,7 +95,7 @@ export default function ListingDetailsPage() {
   if (!listing) return <div className="p-4">Listing not found.</div>;
 
   const disabledDates = listing.availabilities
-    .filter((a) => !listing.isAlwaysAvailable)
+    .filter(() => !listing.isAlwaysAvailable)
     .map((a) => ({ from: new Date(a.startDate), to: new Date(a.endDate) }));
 
   return (
@@ -103,7 +103,7 @@ export default function ListingDetailsPage() {
       <h1 className="text-3xl font-bold mb-4">{listing.title}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <div className="grid grid-cols-2 gap-2 mb-4 h-96 overflow-auto">
+          <div className="grid grid-cols-2 gap-2 mb-4 max-h-96 overflow-auto">
             {listing.photos.map((photo, index) => (
               <Image
                 key={index}

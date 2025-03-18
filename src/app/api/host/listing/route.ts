@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromToken } from "@/lib/auth";
-import { google } from "googleapis";
-import { Readable } from "stream";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(

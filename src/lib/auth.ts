@@ -9,7 +9,7 @@ export function getUserFromToken(req: NextRequest) {
   if (!token) return null;
   try {
     return jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
-  } catch (error) {
+  } catch {
     return null;
   }
 }

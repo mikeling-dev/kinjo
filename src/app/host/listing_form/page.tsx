@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { useAuth } from "@/lib/AuthContext";
-import { supabase } from "@/lib/supabase";
 
 export default function ListingFormPage() {
   const { user } = useAuth();
@@ -83,7 +82,7 @@ export default function ListingFormPage() {
       } else {
         setMessage(data.error || "Failed to create listing");
       }
-    } catch (error) {
+    } catch {
       setMessage("An error occurred");
     }
   };

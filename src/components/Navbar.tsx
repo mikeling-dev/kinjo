@@ -5,7 +5,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import AuthForm from "./AuthForm";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Avatar, AvatarImage } from "./ui/avatar";
+import { Avatar } from "./ui/avatar";
 import { useAuth } from "@/lib/AuthContext";
 import SearchForm from "./SearchForm";
 

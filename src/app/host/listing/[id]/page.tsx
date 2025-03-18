@@ -12,6 +12,7 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -140,7 +141,7 @@ export default function ListingDetailsPage() {
         const data = await res.json();
         alert(data.error || "Failed to update listing");
       }
-    } catch (error) {
+    } catch {
       alert("An error occurred");
     }
   };
@@ -159,16 +160,16 @@ export default function ListingDetailsPage() {
         const data = await res.json();
         alert(data.error || "Failed to delete listing");
       }
-    } catch (error) {
+    } catch {
       alert("An error occurred");
     }
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
       const oldIndex = photos.findIndex((p) => p.id === active.id);
-      const newIndex = photos.findIndex((p) => p.id === over.id);
+      const newIndex = photos.findIndex((p) => p.id === over?.id);
       const newPhotos = arrayMove(photos, oldIndex, newIndex);
       setPhotos(newPhotos);
     }

@@ -14,16 +14,22 @@ interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
-  refreshUser: () => Promise<any>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<User | null>(null);
+
+  // Initialize user from localStorage on mount (client-side only)
+  useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   // Check for existing session on mount
   useEffect(() => {
     fetch("/api/auth/user")
@@ -35,24 +41,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
       })
-      .catch(() => setUser(null));
+      .catch(() => {
+        setUser(null);
+        localStorage.removeItem("user");
+      });
   }, []);
 
   const refreshUser = async () => {
-    fetch("/api/auth/user")
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error("Not authenticated");
-      })
-      .then((data: User) => setUser(data));
+    try {
+      const res = await fetch("/api/auth/user");
+      if (!res.ok) throw new Error("Not authenticated");
+      const data: User = await res.json();
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+    } catch {
+      setUser(null);
+      localStorage.removeItem("user");
+    }
   };
 
   const login = (userData: User) => {
     setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const logout = () => {
-    fetch("/api/auth/logout").then(() => setUser(null));
+  const logout = async () => {
+    await fetch("/api/auth/logout");
+    setUser(null);
+    localStorage.removeItem("user");
   };
 
   return (

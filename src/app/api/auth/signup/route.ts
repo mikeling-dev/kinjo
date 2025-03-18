@@ -13,13 +13,9 @@ export async function POST(req: NextRequest) {
     // Check if email already exists
     const exisitingUser = await prisma.user.findUnique({ where: { email } });
     if (exisitingUser) {
-      return (
-        NextResponse.json({
-          error: "Email already in use, please log in instead.",
-        }),
-        {
-          status: 400,
-        }
+      return NextResponse.json(
+        { error: "Email already in use, please log in instead." },
+        { status: 400 }
       );
     }
 
@@ -39,20 +35,28 @@ export async function POST(req: NextRequest) {
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: "24h",
     });
+
     const cookie = serialize("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 86400,
       path: "/",
     });
 
-    return (
-      NextResponse.json({
+    // Create the response first
+    const response = NextResponse.json(
+      {
         message: "User created and logged in",
         user: { id: user.id, email, name },
-      }),
-      { status: 201, headers: { "Set-Cookie": cookie } }
+      },
+      { status: 201 }
     );
+
+    // Set the cookie
+    response.headers.set("Set-Cookie", cookie);
+
+    return response;
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Signup failed" }, { status: 500 });

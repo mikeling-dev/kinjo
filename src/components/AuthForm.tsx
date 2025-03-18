@@ -38,7 +38,7 @@ export default function AuthForm() {
       } else {
         setMessage(data.error);
       }
-    } catch (error) {
+    } catch {
       setMessage("An error occured");
     }
   };

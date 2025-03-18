@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { ChevronsUpDown } from "lucide-react"; // Icons from shadcn
 
 // Prepare country list
-const countryList = Object.entries(countries).map(([code, info]) => ({
+const countryList = Object.entries(countries).map(([, info]) => ({
   code: info.phone[0],
   country: info.name,
   searchValue: `${info.phone[0]} ${info.name.toLowerCase()}`, // For filtering
