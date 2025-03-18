@@ -103,8 +103,8 @@ export default function ListingDetailsPage() {
       <h1 className="text-3xl font-bold mb-4">{listing.title}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {listing.photos.slice(0, 5).map((photo, index) => (
+          <div className="grid grid-cols-2 gap-2 mb-4 h-96 overflow-auto">
+            {listing.photos.map((photo, index) => (
               <Image
                 key={index}
                 src={photo.photoUrl}

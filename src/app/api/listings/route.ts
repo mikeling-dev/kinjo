@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
   }
 
   const listing = await prisma.listing.findUnique({
-    where: { id: listingId },
+    where: { id: parseInt(listingId) },
     select: {
       capacity: true,
       pricePerNight: true,
@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
   const booking = await prisma.booking.create({
     data: {
       userId: userData.userId,
-      listingId,
+      listingId: parseInt(listingId),
       startDate: start,
       endDate: end,
       guests,
